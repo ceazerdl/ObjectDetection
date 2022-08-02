@@ -190,7 +190,7 @@ if __name__ == "__main__":
             save_path = f"{ckpt_path}/epoch{epoch}{CFG.ckpt_pathname}"
             if os.path.isfile(save_path):
                 os.remove(save_path)
-            torch.save(model.load_state_dict(), save_path)
+            torch.save(model.state_dict(), save_path)
 
         epoch_time = time.time() - start_time
         print("epoch:{}, time:{:.2f}s, best:{}\n".format(epoch, epoch_time, CFG.best_val_acc), flush=True)
