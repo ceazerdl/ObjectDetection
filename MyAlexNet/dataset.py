@@ -24,7 +24,8 @@ class CatAndDogDataset(Dataset):
         self.transform = transform
         self.split_n = split_n
         self.rng_seed = rng_seed
-        self.data_info = self.get_img_info()  # 这是个列表，该列表里的元素是元组，每个元组里保存一张图片的路径和该图片的标签
+        # 这是个列表，该列表里的元素是元组，每个元组里保存一张图片的路径和该图片的标签
+        self.data_info = self.get_img_info()
 
     def __getitem__(self, index):
         '''
@@ -51,14 +52,14 @@ class CatAndDogDataset(Dataset):
 
     def get_img_info(self):
         img_names = os.listdir(self.data_dir)
-        img_names = list(filter(lambda x: x.endwith(".jpg"), img_names))
+        img_names = list(filter(lambda x: x.endswith(".jpg"), img_names))
 
         # 这个方法会使用两次，一次是在生成训练集信息时，一次是在生成验证集信息时，所以为了保证两次数据集划分的一致性，需要固定random_seed
         random.seed(self.rng_seed)
         random.shuffle(img_names)
 
         # 处理labels
-        img_labels = [0 if name.starwith("cat") else 1 for name in img_names]
+        img_labels = [0 if name.startswith("cat") else 1 for name in img_names]
 
         # 划分训练集和验证集
         split_idx = int(len(img_labels) * self.split_n)
