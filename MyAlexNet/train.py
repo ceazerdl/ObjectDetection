@@ -41,8 +41,8 @@ def build_dataloader(CFG, data_transforms):
     train_data = CatAndDogDataset(data_dir=CFG.data_dir, mode="train", rng_seed=CFG.seed, transform=data_transforms["train"])
     valid_data = CatAndDogDataset(data_dir=CFG.data_dir, mode="valid", rng_seed=CFG.seed, transform=data_transforms["valid"])
 
-    train_dataloader = DataLoader(train_data, batch_size=CFG.train_bs, num_workers=0, shuffle=True, pin_memory=True)
-    valid_dataloader = DataLoader(valid_data, batch_size=CFG.valid_bs, num_workers=0, shuffle=False, pin_memory=True)
+    train_dataloader = DataLoader(train_data, batch_size=CFG.train_bs, num_workers=4, shuffle=True, pin_memory=True)
+    valid_dataloader = DataLoader(valid_data, batch_size=CFG.valid_bs, num_workers=4, shuffle=False, pin_memory=True)
 
     return train_dataloader, valid_dataloader
 
@@ -187,7 +187,8 @@ if __name__ == "__main__":
         val_acc = valid_one_epoch(model, valid_loader, CFG, correct_val, total_val, loss_val, criterion, epoch)
         CFG.is_best = (val_acc > CFG.best_val_acc)
         if CFG.is_best:
-            save_path = f"{ckpt_path}/epoch{epoch}{CFG.ckpt_pathname}"
+            CFG.best_val_acc = val_acc
+            save_path = f"{ckpt_path}/{CFG.best_val_acc}{CFG.ckpt_pathname}"
             if os.path.isfile(save_path):
                 os.remove(save_path)
             torch.save(model.state_dict(), save_path)
