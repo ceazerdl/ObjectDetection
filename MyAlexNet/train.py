@@ -56,7 +56,7 @@ class CFG(object):
     data_dir = os.path.join(Base_dir, "data", "train")
     ckpt_pathname = "alexnet_img224224_bs32.pth"
     img_size = [256, 256]
-    train_bs = 32
+    train_bs = 64
     valid_bs = 2 * train_bs
     num_classes = 2
     epoch = 90
@@ -148,6 +148,8 @@ def valid_one_epoch(model, valid_loader, CFG, correct_val, total_val, loss_val, 
 
 
 if __name__ == "__main__":
+    print(torch.cuda.device_count())
+    print(torch.cuda.get_device_name())
     ckpt_path = f"./checkpoint"
     if not os.path.exists(ckpt_path):
         os.makedirs(ckpt_path)
