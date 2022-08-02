@@ -59,7 +59,7 @@ class CFG(object):
     train_bs = 64
     valid_bs = 2 * train_bs
     num_classes = 2
-    epoch = 90
+    epoch = 15
     lr = 1e-5
     wd = 5e-4
     lr_drop = 10
