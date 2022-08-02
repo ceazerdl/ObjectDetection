@@ -51,7 +51,7 @@ class CFG(object):
     seed = 111
     Base_dir = os.path.dirname(os.path.abspath(__file__))
     data_dir = os.path.join(Base_dir, "data", "train")
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     path_state_dict = os.path.join(Base_dir, "data", "alexnet-owt-4df8aa71.pth")
     data_dir = os.path.join(Base_dir, "data", "train")
     ckpt_pathname = "alexnet_img224224_bs32.pth"
@@ -60,12 +60,10 @@ class CFG(object):
     valid_bs = 2 * train_bs
     num_classes = 2
     epoch = 90
-    lr = 1e-2
+    lr = 1e-5
     wd = 5e-4
-    thr = 0.5
     lr_drop = 10
     log_interval = 5
-    val_interval = 5
     is_best = False
     best_val_acc = 0
     norm_mean = [0.485, 0.456, 0.406]
