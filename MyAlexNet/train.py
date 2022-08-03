@@ -115,7 +115,7 @@ def train_one_epoch(model, train_loader, optimizer, lossfunc, CFG, total, correc
         if (i+1) % CFG.log_interval == 0:
             loss_mean = loss_mean / CFG.log_interval
             print("Training:Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss:{:.4f} Acc:{:.2%}".format(
-                epoch, CFG.epoch, i+1, len(train_loader), loss_mean, correct/total
+                epoch, CFG.epoch-1, i+1, len(train_loader), loss_mean, correct/total
             ))
 
             loss_mean = 0.
@@ -142,7 +142,7 @@ def valid_one_epoch(model, valid_loader, CFG, correct_val, total_val, loss_val, 
     # valid_curve.append(loss_val_mean)
 
     print("Valid:\t Epoch[{:0>3}/{:0>3}] Iteration[{:0>3}/{:0>3}] Loss: {:.4f} Acc:{:.2%}".format(
-        epoch, CFG.epoch, i+1, len(valid_loader), loss_val_mean, correct_val / total_val
+        epoch, CFG.epoch-1, i+1, len(valid_loader), loss_val_mean, correct_val / total_val
     ))
     return correct_val / total_val
 

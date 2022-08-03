@@ -1,24 +1,19 @@
 from torch.utils.data import Dataset
 import os
 import random
-import cv2
 from PIL import Image
-
-
-random.seed(1)
-data_label = {"dog": 1, "cat": 0}
 
 
 class CatAndDogDataset(Dataset):
     def __init__(self, data_dir, mode="train", split_n=0.9, rng_seed=111, transform=None):
-        '''
+        """
         猫狗数据集分类任务的DataSet
         :param data_dir: 文件路径
         :param mode: 当前模式
         :param split_n: 训练集和验证集的划分比例
         :param rng_seed: 随机种子
         :param transform: 数据预处理
-        '''
+        """
         self.data_dir = data_dir
         self.mode = mode
         self.transform = transform
@@ -28,11 +23,11 @@ class CatAndDogDataset(Dataset):
         self.data_info = self.get_img_info()
 
     def __getitem__(self, index):
-        '''
+        """
         这个方法尽可能的简单，能不在这里面做的，就不要在这里面做，否则加载数据的过程会非常慢
         :param index:
         :return:
-        '''
+        """
         path_img, label = self.data_info[index]
         # img = cv2.imread(path_img)
         # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -42,10 +37,10 @@ class CatAndDogDataset(Dataset):
         return img, label
 
     def __len__(self):
-        '''
+        """
         返回数据集长度
         :return:
-        '''
+        """
         if len(self.data_info) == 0:
             raise Exception("\ndata_dir:{} is a empty dir! Please checkout your path of images!".format(self.data_dir))
         return len(self.data_info)
