@@ -88,7 +88,7 @@ def train_one_epoch(model, train_loader, optimizer, lossfunc, CFG, total, correc
         optimizer.step()
 
         # 统计分类情况
-        _, predicted = torch.max(outputs.data, 1)   # outputs.shape为(b, numclass)       predicted.shape为(bs, 1)
+        _, predicted = torch.max(outputs.data, 1)   # outputs.shape为(bs, numclass)       predicted.shape为(bs, 1)
         total += labels.size(0)
         correct += (predicted == labels).squeeze().cpu().sum().numpy()
 
@@ -141,12 +141,12 @@ if __name__ == "__main__":
     criterion = nn.CrossEntropyLoss()
 
     # finetune
-    flag = 0
+    flag = 1
     if flag:
         fc_params_id = list(map(id, model.classifier.parameters()))
         base_params = filter(lambda p: id(p) not in fc_params_id, model.parameters())
-        optimizer = optim.SGD([{"params":base_params, "lr": CFG.lr * 0.1},  # 如果为0，则不更新卷积层参数
-                              {"params":fc_params_id, "lr": CFG.lr}], momentum=0.9, weight_decay=CFG.wd)
+        optimizer = optim.SGD([{"params": base_params, "lr": CFG.lr * 0.1},  # 如果为0，则不更新卷积层参数
+                              {"params": model.classifier.parameters(), "lr": CFG.lr}], momentum=0.9, weight_decay=CFG.wd)
     else:
         optimizer = optim.SGD(model.parameters(), lr=CFG.lr, momentum=0.9, weight_decay=CFG.wd)
     lr_scheduler = optim.lr_scheduler.StepLR(optimizer, CFG.lr_drop, gamma=0.1)
