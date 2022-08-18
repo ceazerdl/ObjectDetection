@@ -53,7 +53,6 @@ class CFG(object):
     data_dir = os.path.join(Base_dir, "data", "train")
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     path_state_dict = os.path.join(Base_dir, "data", "alexnet-owt-4df8aa71.pth")
-    data_dir = os.path.join(Base_dir, "data", "train")
     ckpt_pathname = "alexnet_img224224_bs32.pth"
     img_size = [256, 256]
     train_bs = 64

@@ -33,13 +33,13 @@ class CatDogDataset(Dataset):
         return img, label
 
     def __len__(self):
-        if len(self.data_info == 0):
+        if len(self.data_info) == 0:
             raise Exception(f"\ndata_dir:{self.data_dir} is empty! Please check out your path of images!")
         return len(self.data_info)
 
     def _get_img_info(self):
         img_names = os.listdir(self.data_dir)
-        img_names = list(filter(lambda x: x.endwith(".jpg"), img_names))
+        img_names = list(filter(lambda x: x.endswith(".jpg"), img_names))
 
         random.seed(self.rng_seed)
         random.shuffle(img_names)
