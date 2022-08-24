@@ -1,11 +1,11 @@
 import torch
 import torch.nn as nn
-# import get_model as models
-import torchvision.models as models
+import get_model as models
+# import torchvision.models as models
 
 
 def get_googlenet(path_state_dict, device, num_classes=1000, vis_model=False):
-    model = models.googlenet()
+    model = models.GoogLeNet(init_weights=False)
     if path_state_dict:
         pretrained = torch.load(path_state_dict)
         model.load_state_dict(pretrained)

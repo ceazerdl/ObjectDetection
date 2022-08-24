@@ -9,47 +9,11 @@ from typing import Optional, Tuple, List, Callable, Any
 
 
 __all__ = ["GoogLeNet",  "GoogLeNetOutputs", "_GoogLeNetOutputs"]
-GoogLeNetOutputs = namedtuple("GoogLeNetOutputs", ["logits", "aux_logits2", "aux_logits1"])
+GoogLeNetOutputs = namedtuple("GoogLeNetOutputs", ["logits", "aux_logits1", "aux_logits2"])
 GoogLeNetOutputs.__annotations__ = {"logits": Tensor, "aux_logits2": Optional[Tensor],
                                     "aux_logits1": Optional[Tensor]}
 
 _GoogLeNetOutputs = GoogLeNetOutputs
-
-
-def googlenet(pretrained: bool = False, progress: bool = True, **kwargs: Any) -> "GoogLeNet":
-    r"""GoogLeNet (Inception v1) model architecture from
-    `"Going Deeper with Convolutions" <http://arxiv.org/abs/1409.4842>`_.
-
-    Args:
-        pretrained (bool): If True, returns a model pre-trained on ImageNet
-        progress (bool): If True, displays a progress bar of the download to stderr
-        aux_logits (bool): If True, adds two auxiliary branches that can improve training.
-            Default: *False* when pretrained is True otherwise *True*
-        transform_input (bool): If True, preprocesses the input according to the method with which it
-            was trained on ImageNet. Default: *False*
-    """
-    if pretrained:
-        if 'transform_input' not in kwargs:
-            kwargs['transform_input'] = True
-        if 'aux_logits' not in kwargs:
-            kwargs['aux_logits'] = False
-        if kwargs['aux_logits']:
-            warnings.warn('auxiliary heads in the pretrained googlenet model are NOT pretrained, '
-                          'so make sure to train them')
-        original_aux_logits = kwargs['aux_logits']
-        kwargs['aux_logits'] = True
-        kwargs['init_weights'] = False
-        model = GoogLeNet(**kwargs)
-        # state_dict = load_state_dict_from_url(model_urls['googlenet'],
-        #                                       progress=progress)
-        # model.load_state_dict(state_dict)
-        if not original_aux_logits:
-            model.aux_logits = False
-            model.aux1 = None  # type: ignore[assignment]
-            model.aux2 = None  # type: ignore[assignment]
-        return model
-
-    return GoogLeNet(**kwargs)
 
 
 class BasicConv2d(nn.Module):
@@ -224,7 +188,7 @@ class GoogLeNet(nn.Module):
         # 7*7*1024
 
         if aux_logits:
-            self.aux1 = inception_aux_block(512,num_classes)
+            self.aux1 = inception_aux_block(512, num_classes)
             self.aux2 = inception_aux_block(528, num_classes)
         else:
             self.aux1 = None  # type: ignore[assignment]
@@ -257,7 +221,7 @@ class GoogLeNet(nn.Module):
             x_ch1 = torch.unsqueeze(x[:, 1], 1) * (0.224 / 0.5) + (0.456 - 0.5) / 0.5
             x_ch2 = torch.unsqueeze(x[:, 2], 1) * (0.225 / 0.5) + (0.406 - 0.5) / 0.5
             x = torch.cat((x_ch0, x_ch1, x_ch2), 1)
-            return x
+        return x
 
     def _forward(self, x: Tensor) -> Tuple[Tensor, Optional[Tensor], Optional[Tensor]]:
         # N x 3 x 224 x 224
@@ -292,7 +256,7 @@ class GoogLeNet(nn.Module):
         x = self.inception4d(x)
         # N x 528 x 14 x 14
         aux2: Optional[Tensor] = None
-        if aux2 is not None:
+        if self.aux2 is not None:
             if self.training:
                 aux2 = self.aux2(x)
 
@@ -312,12 +276,12 @@ class GoogLeNet(nn.Module):
         x = self.dropout(x)
         x = self.fc(x)
         # N x 1000 (num_classes)
-        return x, aux2, aux1
+        return x, aux1, aux2
 
     @torch.jit.unused
-    def eager_outputs(self, x: Tensor, aux2: Tensor, aux1: Optional[Tensor]) -> GoogLeNetOutputs:
+    def eager_outputs(self, x: Tensor, aux1: Tensor, aux2: Optional[Tensor]) -> GoogLeNetOutputs:
         if self.training and self.aux_logits:
-            return _GoogLeNetOutputs(x, aux2, aux1)
+            return _GoogLeNetOutputs(x, aux1, aux2)
         else:
             return x    # type: ignore[return-value]
 
@@ -328,14 +292,13 @@ class GoogLeNet(nn.Module):
         if torch.jit.is_scripting():
             if not aux_defined:
                 warnings.warn("Scripted GoogleNet always returns GoogleNetOutputs Tuple")
-            return GoogLeNetOutputs(x, aux2, aux1)
+            return GoogLeNetOutputs(x, aux1, aux2)
         else:
-            return self.eager_outputs(x, aux2, aux1)
+            return self.eager_outputs(x, aux1, aux2)
 
 
 if __name__ == "__main__":
-    # model = GoogLeNet()
-    model = googlenet()
+    model = GoogLeNet()
     summary(model, input_size=(3, 224, 224), device="cpu")
     # print(model)
 

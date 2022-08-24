@@ -19,13 +19,13 @@ if __name__ == "__main__":
     path_state_dict = os.path.join(BASE_DIR, "googlenet-1378be20.pth")
 
     num_classes = 8
-    max_epoch = 7
+    max_epoch = 20
     bs = 64
     LR = 1e-3
     log_interval = 1
     val_interval = 1
     start_epoch = -1
-    lr_decay_step = 1
+    lr_decay_step = 5
 
     # ================= step 1/5 数据处理 ========================
     norm_mean = [0.485, 0.496, 0.406]
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     valid_loader = DataLoader(valid_data, batch_size=bs, shuffle=False, pin_memory=True)
 
     # ============================= 2/5 模型 ===============================
-    model = get_googlenet(path_state_dict, device, num_classes=8, vis_model=True)
+    model = get_googlenet(path_state_dict, device, num_classes=8, vis_model=False)
 
     # ============================= 3/5 损失函数 ============================
     criterion = nn.CrossEntropyLoss()
@@ -85,8 +85,9 @@ if __name__ == "__main__":
             optimizer.zero_grad()
             # outputs为namedtuple
             outputs = model(inputs)
+            # print(outputs[1])
             loss_main, loss_aux1, loss_aux2 = criterion(outputs[0], labels), \
-                                  criterion(outputs[1], labels), criterion(outputs[2], labels)
+                                              criterion(outputs[1], labels), criterion(outputs[2], labels)
             loss = loss_main + 0.3 * loss_aux1 + 0.3 * loss_aux2
             loss.backward()
 
