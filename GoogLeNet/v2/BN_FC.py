@@ -33,9 +33,6 @@ def plot_histogram(l_in, l_in_bn, pre_ac, pre_ac_bn):
             a.set_yticks(())
             a.set_xticks(())
 
-        ax_pa_bn.set_xticks(p_range)
-        ax_bn.set_xticks(the_range)
-
     plt.suptitle("Activation:{} epoch:{}/{}".format(act_name, epoch, EPOCH))
     plt.pause(0.05)
     # plt.savefig("{}.png".format(epoch))
