@@ -2,7 +2,7 @@ import torch
 from torch import Tensor
 import numpy as np
 from numpy import array
-from IoU_parallel import box_iou_pt, box_iou_np
+from IoU_parallel import box_iou_pt, box_iou_np, iou_parallel
 
 
 def torch_nms(boxes: Tensor, scores: Tensor, thr: float) -> Tensor:
@@ -48,6 +48,33 @@ def np_nms(boxes: array, scores: array, thr: float) -> array:
 
     keep = np.array(keep)
     return keep
+
+
+def nms(boxes: Tensor, scores: Tensor, thr: float, top_k: int):
+    """
+    :param boxes: Tensor[N, 4] 尚未筛选的boxes
+    :param scores:
+    :param thr:
+    :param top_k:
+    :return:
+    """
+    keep = scores.new(scores.size()).zero_().long()
+    count = 0
+    _, idx = scores.sort()  # 升序排列
+    idx = idx[-top_k:]
+    while idx.numel():
+        max_score_i = idx[-1]
+        max_score_box = boxes[max_score_i][None, :]
+        keep[count] = max_score_i
+        count += 1
+        if idx.size() == 1:
+            break
+        idx = idx[:-1]
+        other_boxes = boxes[idx]
+        ious = iou_parallel(max_score_box, other_boxes)   # NxM
+        idx = idx[ious[0].le(thr)]
+
+    return keep, count
 
 
 if __name__ == "__main__":
