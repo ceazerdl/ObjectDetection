@@ -66,10 +66,6 @@ def box_iou_np(boxes1: array, boxes2: array) -> array:
     return iou
 
 
-def iou_parallel(boxes1: Tensor, boxes2: Tensor) -> Tensor:
-    pass
-
-
 if __name__ == "__main__":
     pass
 
