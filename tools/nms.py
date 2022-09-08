@@ -132,13 +132,19 @@ if __name__ == "__main__":
     print("boxes.shape:{}".format(boxes.size()))
     keep = torch_nms(boxes, scores, thr=0.5)
     print(keep)
-    img = np.zeros((1024, 1024), dtype=np.int8)
+    img = np.zeros((1024, 1024, 3), dtype=np.int8)
     for i in range(len(boxes)):
-        img = cv.rectangle(img, (boxes[i][0], boxes[i][1]), (boxes[i][2], boxes[i][3]), (255, 255, 0), 2)
-        img = cv.putText(img, str(i), (boxes[i][0], boxes[i][1]), 2, 0.8, (255, 255, 255), 2)
+        img = cv.rectangle(img, (boxes[i][0], boxes[i][1]), (boxes[i][2], boxes[i][3]), (np.random.randint(0, 255),
+                                                                                         np.random.randint(0, 255),
+                                                                                         np.random.randint(0, 255)), 2)
+        img = cv.putText(img, str(i), (boxes[i][0], boxes[i][1]), 2, 1, (255, 255, 255), 2)
     for j in range(len(keep)):
-        img = cv.rectangle(img, (boxes[keep[j]][0]+400, boxes[keep[j]][1]), (boxes[keep[j]][2]+400, boxes[keep[j]][3]), (255, 0, 255), 2)
-        img = cv.putText(img, str(keep[j].item()), (boxes[keep[j]][0]+400, boxes[keep[j]][1]), 2, 0.8, (255, 255, 255), 2)
+        img = cv.rectangle(img, (boxes[keep[j]][0]+400, boxes[keep[j]][1]), (boxes[keep[j]][2]+400, boxes[keep[j]][3]),
+                           (np.random.randint(0, 255),
+                            np.random.randint(0, 255),
+                            np.random.randint(0, 255)), 2)
+        img = cv.putText(img, str(keep[j].item()), (boxes[keep[j]][0]+400, boxes[keep[j]][1]), 2, 0.8, (255, 255, 255),
+                         2)
     cv.imshow("img", img)
     cv.waitKey(0)
     cv.destroyAllWindows()
