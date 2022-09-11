@@ -37,6 +37,45 @@ D = torch.max(B[:, None, :2], C[:, :2])
 # print(B.type(), C.type())
 a = torch.randn((3, 1))
 b = torch.randn(4)
-print(a, b)
+# print(a, b)
 c = torch.add(a, b)
-print(c, c.size())
+# print(c, c.size())
+a = torch.randint(1, 10, (1, 10))
+
+# print(a[0])
+# print(a[0, :])
+# a = a[:-1]
+# print(a.size())
+b = a.ge(5)
+# print(b)
+c = a >= 5
+# print(c)
+d = a[c]
+# print(d)
+a = torch.randn(4, 4)
+print(a)
+b = torch.argmax(a)
+c = torch.argmax(a, dim=0, keepdim=True)
+print(b)
+print(b.size())
+print(c)
+print(c.size())
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

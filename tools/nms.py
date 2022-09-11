@@ -119,18 +119,24 @@ def nms(boxes: Tensor, scores: Tensor, thr: float, top_k: int):
 
 
 if __name__ == "__main__":
+    # boxes_scores = np.array([[100, 100, 210, 210, 0.72],
+    #                   [250, 250, 420, 420, 0.8],
+    #                   [220, 220, 320, 330, 0.92],
+    #                   [100, 100, 210, 210, 0.72],
+    #                   [230, 240, 325, 330, 0.81],
+    #                   [220, 230, 315, 340, 0.9]])
     boxes_scores = np.array([[100, 100, 210, 210, 0.72],
-                      [250, 250, 420, 420, 0.8],
-                      [220, 220, 320, 330, 0.92],
-                      [100, 100, 210, 210, 0.72],
-                      [230, 240, 325, 330, 0.81],
-                      [220, 230, 315, 340, 0.9]])
+                             [250, 250, 420, 420, 0.8],
+                             [220, 220, 320, 330, 0.92],
+                             [100, 400, 240, 240, 0.72],
+                             [230, 240, 325, 330, 0.81],
+                             [220, 230, 315, 340, 0.9]])
     boxes = boxes_scores[:, :4]
     scores = boxes_scores[:, 4]
     boxes = torch.from_numpy(boxes)
     scores = torch.from_numpy(scores)
     print("boxes.shape:{}".format(boxes.size()))
-    keep = torch_nms(boxes, scores, thr=0.5)
+    keep = torch_nms(boxes, scores, thr=0.3)
     print(keep)
     img = np.zeros((1024, 1024, 3), dtype=np.int8)
     for i in range(len(boxes)):
