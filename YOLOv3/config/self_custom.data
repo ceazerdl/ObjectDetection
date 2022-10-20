@@ -1,0 +1,4 @@
+classes= 2
+train=face_mask/train.txt
+valid=face_mask/test.txt
+names=data/self_classes.names
